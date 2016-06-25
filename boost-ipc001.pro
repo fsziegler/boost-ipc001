@@ -5,15 +5,15 @@
 #-------------------------------------------------
 
 QT       += core
-
 QT       -= gui
 
 TARGET = boost-ipc001
+
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG += c++11
 
 TEMPLATE = app
-
 
 SOURCES += main.cpp
 
@@ -32,3 +32,29 @@ else:unix: PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/libboos
 
 QMAKE_POST_LINK += pwd;
 QMAKE_POST_LINK += ../boost-ipc001/ziegversion.sh
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/lib/i386-linux-gnu/release/ -lpthread
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/lib/i386-linux-gnu/debug/ -lpthread
+else:unix: LIBS += -L$$PWD/../../../../../usr/lib/i386-linux-gnu/ -lpthread
+
+INCLUDEPATH += $$PWD/../../../../../usr/lib/i386-linux-gnu
+DEPENDPATH += $$PWD/../../../../../usr/lib/i386-linux-gnu
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/release/libpthread.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/debug/libpthread.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/release/pthread.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/debug/pthread.lib
+else:unix: PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/libpthread.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/lib/i386-linux-gnu/release/ -lrt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/lib/i386-linux-gnu/debug/ -lrt
+else:unix: LIBS += -L$$PWD/../../../../../usr/lib/i386-linux-gnu/ -lrt
+
+INCLUDEPATH += $$PWD/../../../../../usr/lib/i386-linux-gnu
+DEPENDPATH += $$PWD/../../../../../usr/lib/i386-linux-gnu
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/release/librt.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/debug/librt.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/release/rt.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/debug/rt.lib
+else:unix: PRE_TARGETDEPS += $$PWD/../../../../../usr/lib/i386-linux-gnu/librt.a

@@ -1,9 +1,67 @@
 #include <iostream>
+#include <boost/interprocess/ipc/message_queue.hpp>
+#include <vector>
 #include <boost/program_options.hpp>
 #include "ZiegVersion.h"
 
 using namespace std;
+using namespace boost::interprocess;
 namespace po = boost::program_options;
+
+void clientRun()
+{
+    try{
+       //Erase previous message queue
+       //message_queue::remove("message_queue");
+
+       //Create a message_queue.
+       message_queue mq
+          (open_or_create               //only create
+          ,"message_queue"           //name
+          ,100                       //max message number
+          ,sizeof(int)               //max message size
+          );
+
+       //Send 100 numbers
+       for(int i = 0; i < 100; ++i){
+          mq.send(&i, sizeof(i), 0);
+       }
+    }
+    catch(interprocess_exception &ex){
+       std::cout << ex.what() << std::endl;
+    }
+}
+
+void serverRun()
+{
+    try{
+       //Open a message queue.
+       message_queue mq
+          (open_or_create        //only create
+          ,"message_queue"  //name
+           ,100                       //max message number
+           ,sizeof(int)               //max message size
+           );
+
+       unsigned int priority;
+       message_queue::size_type recvd_size;
+
+       //Receive 100 numbers
+       for(int i = 0; i < 100; ++i){
+          int number;
+          mq.receive(&number, sizeof(number), recvd_size, priority);
+          if(number != i || recvd_size != sizeof(number))
+             return;
+          cout << "Number received: " << number << endl;
+       }
+    }
+    catch(interprocess_exception &ex){
+       message_queue::remove("message_queue");
+       std::cout << ex.what() << std::endl;
+       return;
+    }
+    message_queue::remove("message_queue");
+}
 
 int main(int argc, char *argv[])
 {
@@ -38,9 +96,11 @@ int main(int argc, char *argv[])
        }
        if (vm.count("client")) {
            cout << "Running in client mode ..." << endl;
+           clientRun();
        }
        else if (vm.count("server")) {
            cout << "Running in server mode ..." << endl;
+           serverRun();
        }
 
     }
