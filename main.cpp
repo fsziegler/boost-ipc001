@@ -36,14 +36,23 @@ int main(int argc, char *argv[])
           cout << "      UUID: ";
           cout << ZiegVersion::UUID << endl;
        }
+       if (vm.count("client")) {
+           cout << "Running in client mode ..." << endl;
+       }
+       else if (vm.count("server")) {
+           cout << "Running in server mode ..." << endl;
+       }
+
+    }
+    catch(exception& ex)
+    {
+       cout << "Exception " << ex.what() << " thrown." << endl;
     }
     catch(...)
     {
-
+       cout << "Unknown exception thrown." << endl;
     }
 
-
-
-    cout << "Hello World!" << endl;
+    cout << "Bye!" << endl;
     return 0;
 }
